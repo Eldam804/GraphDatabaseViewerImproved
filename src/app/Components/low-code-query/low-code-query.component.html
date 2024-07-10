@@ -1,0 +1,34 @@
+<div mat-dialog-content>
+    <div *ngIf="!lowCode && !gptBuilder">
+        <div class="info-header">Crete a query</div>
+        <div class="info-section">
+            <button mat-raised-button extended color="primary" matTooltip="Type a prompt to build a query that will be executed" (click)="openBuilder()">
+                GPT Builder
+            </button>
+            <button mat-raised-button extended color="primary"  matTooltip="Build a query with a dynamic builder" (click)="openLowCodeBuilder()">
+                Low code format
+            </button>
+        </div>
+    </div>
+    <div *ngIf="lowCode">
+        <button mat-icobuttonn- class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="previousStep()">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div>Tu bude low code</div>
+        <mat-form-field>
+            <mat-label>Select which object to query</mat-label>
+            <select matNativeControl required>
+              <option value="volvo">Volvo</option>
+              <option value="saab">Saab</option>
+              <option value="mercedes">Mercedes</option>
+              <option value="audi">Audi</option>
+            </select>
+          </mat-form-field>
+    </div>
+    <div *ngIf="gptBuilder">
+        <button mat-icobuttonn- class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="previousStep()">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div>Tu bude gpt builder</div>
+    </div>
+</div>

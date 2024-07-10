@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter, Input } from '@angular/core';
 import {MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule} from '@angular/material/dialog';
 import { DBConnectDialogComponent } from 'src/app/Components/dbconnect-dialog/dbconnect-dialog.component';
 import { NodeMapDialogComponent } from 'src/app/Components/node-map-dialog/node-map-dialog.component';
+import { LowCodeQueryComponent } from 'src/app/Components/low-code-query/low-code-query.component';
 
 @Component({
   selector: 'app-header',
@@ -46,6 +47,14 @@ export class HeaderComponent {
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });
+  }
+  openLowCodeModal(){
+    const dialogRef = this.dialog.open(LowCodeQueryComponent, {
+      
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("Dialog closed");
+    })
   }
   openDrawer(){
     this.emitter.emit("openDrawer");

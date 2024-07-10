@@ -29,6 +29,10 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { NodeSingleDialogComponent } from './Components/node-single-dialog/node-single-dialog.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { LowCodeQueryComponent } from './Components/low-code-query/low-code-query.component';
+import {MatSelectModule} from '@angular/material/select';
+import {MatListModule} from '@angular/material/list';
+
 
 @NgModule({
   declarations: [
@@ -42,6 +46,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     NodeMapDialogComponent,
     NodeDetailDialogComponent,
     NodeSingleDialogComponent,
+    LowCodeQueryComponent,
   ],
   exports: [
     AppComponent,
@@ -71,7 +76,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     ReactiveFormsModule,
     MatStepperModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatListModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]
