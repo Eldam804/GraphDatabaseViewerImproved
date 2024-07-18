@@ -15,6 +15,7 @@ export class BodyComponent implements OnInit {
   public nodes: any;
   public edges: any;
   public nodeData: any;
+  public nodeInfoData: any;
   public databaseSelected: boolean = true;
   public restartView: boolean = false;
   private credentialsSubscription!: Subscription;

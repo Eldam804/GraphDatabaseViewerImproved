@@ -32,6 +32,7 @@ export class CanvasViewComponent implements OnChanges, OnInit{
   @Input() classicView: Boolean = true;
   @Input() restartView: Boolean = false;
   @Output() nodeInfo: EventEmitter<any> = new EventEmitter<any>();
+  @Output() nodeDataDetails: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private service: DriverService, public dialog: MatDialog){
     //this.getAllNodes();
@@ -198,11 +199,21 @@ export class CanvasViewComponent implements OnChanges, OnInit{
   getAllNodes(){
     this.nodes = [];
     this.edges = [];
+    let allNodesProps: any = [];
+    let allEdgesProps: any = [];
     forkJoin([
       this.service.getAllNodes(),
       this.service.getAllEdges()
     ]).subscribe(([nodesData, edgesData]) => {
       nodesData.forEach((nodeData: any) => {
+          //@ts-ignore
+          if(!allNodesProps.some(e => e.name === nodeData._fields[0].labels[0])){
+            allNodesProps.push({
+              name: nodeData._fields[0].labels[0],
+              properties: nodeData._fields[0].properties
+            })
+          }
+          
           this.nodes.push({
               id: nodeData._fields[0].identity,
               name: nodeData._fields[0].labels[0],
@@ -211,12 +222,28 @@ export class CanvasViewComponent implements OnChanges, OnInit{
       });
       console.debug(edgesData);
       edgesData.forEach((edgeData: any) => {
+          let startNode: any = this.nodes.find(item => item.id === edgeData._fields[0].start)
+          let endNode: any = this.nodes.find(item => item.id === edgeData._fields[0].end)
+          //@ts-ignore
+          if(!allEdgesProps.some(e => e.type === edgeData._fields[0].type && (!allEdgesProps.some(e => e.startId === startNode.id) || !allEdgesProps.some(e => e.endId === endNode.id)))){
+            allEdgesProps.push({
+              type: edgeData._fields[0].type,
+              start: startNode.name,
+              end: endNode.name,
+              startId: startNode.id,
+              endId: endNode.id
+            })
+          }
+
           this.edges.push({
               source: edgeData._fields[0].start,
               target: edgeData._fields[0].end,
               type: edgeData._fields[0].type
           });
       });
+      console.debug(allNodesProps);
+      console.debug(allEdgesProps);
+      this.nodeDataDetails.emit([allNodesProps, allEdgesProps])
       console.debug("ACTUAL EDGES:");
       console.debug(this.edges);
       console.debug("ACTUAL NODES:");

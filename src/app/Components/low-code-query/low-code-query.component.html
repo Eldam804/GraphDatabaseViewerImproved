@@ -14,16 +14,30 @@
         <button mat-icobuttonn- class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="previousStep()">
             <mat-icon>arrow_back</mat-icon>
         </button>
-        <div>Tu bude low code</div>
+        <div class="container">
         <mat-form-field>
-            <mat-label>Select which object to query</mat-label>
+            <mat-label>Operation</mat-label>
+            <mat-select matNativeControl required [(ngModel)]="selectedOperation">
+              <mat-option *ngFor="let option of operations" [value]="option.value">{{ option.viewValue }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Object type</mat-label>
+            <mat-select matNativeControl required [(ngModel)]="selectedObject">
+                <mat-option *ngFor="let option of nodes" [value]="option.name">{{ option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Filter by value</mat-label>
             <select matNativeControl required>
-              <option value="volvo">Volvo</option>
+              <option value="volvo"></option>
               <option value="saab">Saab</option>
               <option value="mercedes">Mercedes</option>
               <option value="audi">Audi</option>
             </select>
           </mat-form-field>
+          <button mat-raised-button extended color="primary">Create query</button>
+        </div>
     </div>
     <div *ngIf="gptBuilder">
         <button mat-icobuttonn- class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="previousStep()">

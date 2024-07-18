@@ -17,6 +17,8 @@ export class HeaderComponent {
   public zoomPercentage: number = 100;
   readonly UPPER_LIMIT: number = 150;
   readonly LOWER_LIMIT: number = 10;
+  @Input()
+  public nodeDataDetails: any;
 
   @Output("openDrawer")
   emitter: EventEmitter<any> = new EventEmitter();
@@ -50,7 +52,7 @@ export class HeaderComponent {
   }
   openLowCodeModal(){
     const dialogRef = this.dialog.open(LowCodeQueryComponent, {
-      
+      data: this.nodeDataDetails
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log("Dialog closed");
