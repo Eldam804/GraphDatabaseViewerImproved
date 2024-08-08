@@ -52,7 +52,11 @@ export class HeaderComponent {
   }
   openLowCodeModal(){
     const dialogRef = this.dialog.open(LowCodeQueryComponent, {
-      data: this.nodeDataDetails
+      data: this.nodeDataDetails,
+      width: '800px',
+      height: '900px',
+      maxHeight: '95vh',
+      maxWidth:'100vw',
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log("Dialog closed");

@@ -1,6 +1,6 @@
 <div mat-dialog-content>
     <div *ngIf="!lowCode && !gptBuilder">
-        <div class="info-header">Crete a query</div>
+        <div class="info-header">Create a query</div>
         <div class="info-section">
             <button mat-raised-button extended color="primary" matTooltip="Type a prompt to build a query that will be executed" (click)="openBuilder()">
                 GPT Builder
@@ -11,7 +11,7 @@
         </div>
     </div>
     <div *ngIf="lowCode">
-        <button mat-icobuttonn- class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="previousStep()">
+        <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="previousStep()">
             <mat-icon>arrow_back</mat-icon>
         </button>
         <div class="container">
@@ -21,22 +21,48 @@
               <mat-option *ngFor="let option of operations" [value]="option.value">{{ option.viewValue }}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
+          <div *ngIf="selectedOperation == 'display'">
+          <mat-form-field class="mat-form-field">
             <mat-label>Object type</mat-label>
-            <mat-select matNativeControl required [(ngModel)]="selectedObject">
+            <mat-select matNativeControl required [(ngModel)]="selectedObject" (selectionChange)="filteredData()">
                 <mat-option *ngFor="let option of nodes" [value]="option.name">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
-            <mat-label>Filter by value</mat-label>
-            <select matNativeControl required>
-              <option value="volvo"></option>
-              <option value="saab">Saab</option>
-              <option value="mercedes">Mercedes</option>
-              <option value="audi">Audi</option>
-            </select>
-          </mat-form-field>
-          <button mat-raised-button extended color="primary">Create query</button>
+          <div>
+            <mat-form-field *ngIf="selectedObject != null">
+                <mat-label>Filter by value</mat-label>
+                <mat-select matNativeControl required [(ngModel)]="filter">
+                <mat-option *ngFor="let option of nodeAttributes" [value]="option">{{ option }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Field value</mat-label>
+                <input matInput [(ngModel)]="filterComp" name="Object Value">
+            </mat-form-field>
+          </div>
+          </div>
+          <div *ngIf="selectedOperation == 'create'">
+            <mat-form-field>
+                <mat-label>Object Name</mat-label>
+                <input matInput [(ngModel)]="objectName" name="Object Name">
+            </mat-form-field>
+            <div class="container-two-fields" *ngFor="let object of objectAttributes">
+                <mat-form-field>
+                    <mat-label>Field name</mat-label>
+                    <input matInput [(ngModel)]="object.name" name="Object Name">
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Field value</mat-label>
+                    <input matInput [(ngModel)]="object.value" name="Object Value">
+                </mat-form-field>
+            </div>
+            <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="addField()">
+                <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          <span class="output-query">{{this.finalQuery}}</span>
+          <button mat-raised-button extended color="primary" (click)="createQuery()">Create query</button>
+          
         </div>
     </div>
     <div *ngIf="gptBuilder">

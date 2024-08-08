@@ -3,6 +3,27 @@
     font-size: 1.2em;
     margin-bottom: 15px;
   }
+
+  .output-query {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    font-family: 'Georgia', serif;
+    font-size: 20px;
+    color: #333;
+    text-align: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    margin: 20px 0;
+    max-width: 100%;
+    max-height: 200px; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    word-wrap: break-word;
+    word-break: break-all;
+}
   
   .info-section {
     margin-bottom: 15px;
@@ -28,4 +49,19 @@
   .container{
     display: flex;
     flex-direction: column;
+    align-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%
+  }
+
+  .container-two-fields{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .mat-mdc-dialog-content {
+    max-height: initial;
+    height: 600px;
   }

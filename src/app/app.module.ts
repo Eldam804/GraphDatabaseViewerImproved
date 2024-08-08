@@ -78,7 +78,8 @@ import {MatListModule} from '@angular/material/list';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatListModule,
-    MatSelectModule
+    MatSelectModule,
+    MatInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]
