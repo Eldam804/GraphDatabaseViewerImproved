@@ -32,6 +32,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { LowCodeQueryComponent } from './Components/low-code-query/low-code-query.component';
 import {MatSelectModule} from '@angular/material/select';
 import {MatListModule} from '@angular/material/list';
+import { GptService } from './Neo4j/QuryBuilder/gpt.service';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -61,6 +63,7 @@ import {MatListModule} from '@angular/material/list';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatTooltipModule,
+    HttpClientModule,
     MatSlideToggleModule,
     MatGridListModule,
     CdkDrag,
@@ -81,7 +84,7 @@ import {MatListModule} from '@angular/material/list';
     MatSelectModule,
     MatInputModule
   ],
-  providers: [],
+  providers: [GptService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

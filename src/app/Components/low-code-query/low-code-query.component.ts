@@ -1,6 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
 import {MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule} from '@angular/material/dialog';
-
+import { GptService } from 'src/app/Neo4j/QuryBuilder/gpt.service';
 
 @Component({
   selector: 'app-low-code-query',
@@ -27,9 +27,14 @@ export class LowCodeQueryComponent {
   public objectName: String | null = null;
   public objectAttributes: any = [{name: null, value: null}];
   public finalQuery: String | null = null;
+  public updateBy: String | null = null;
+  public updateNewValue: String | null = null;
+  public queryPrompt: String = '';
+  public queryResult: String = '';
   constructor(
     public dialogRef: MatDialogRef<LowCodeQueryComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private gptService: GptService
   ) {
     for (let index = 0; index < data[0].length; index++) {
       console.debug(data[0]);
@@ -45,6 +50,8 @@ export class LowCodeQueryComponent {
       }
     }
     this.nodeAttributes = elements;
+    console.debug("NODE ATTRIBUTES")
+    console.debug(this.nodeAttributes);
   }
   
   addField(){
@@ -89,13 +96,24 @@ export class LowCodeQueryComponent {
         
       }
       this.finalQuery = query;
-    }else if(this.selectedOperation == 'update'){
-      let query = "MATCH(N:" + "WHERE N." + "DETACH DELETE N";
+    }else if(this.selectedOperation == 'delete'){
+      let query;
+      query = "MATCH(N:" + this.selectedObject + ") " + "RETURN N;";
+      if(this.filter != null){
+        query = "MATCH(N:" + this.selectedObject + ") WHERE N." + this.filter + "=" + this.filterComp + " DETACH DELETE N;";
+        
+      }
       this.finalQuery = query;
 
-    }else if(this.selectedOperation == 'delete'){
-      let query = "MATCH(N:" + ") WHERE N." + this.filter + " SET ";
+    }else if(this.selectedOperation == 'update'){
+      let query = "MATCH(N:" + this.selectedObject + ") WHERE N." + this.filter + "=" + this.filterComp + " SET N." + this.updateBy + "=" + this.updateNewValue + ";";
+      this.finalQuery = query;
     }
     
+  }
+  buildQuery(){
+    this.gptService.generateQuery(this.queryPrompt).subscribe(response => {
+      this.queryResult = response
+    });
   }
 }
