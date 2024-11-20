@@ -19,6 +19,7 @@
       <mat-icon>share</mat-icon>
     </button>
     <span class="example-spacer"></span>
+    <mat-slide-toggle (change)="highlightView()" [(ngModel)]="boolHighlightNodes" matTooltip="Highlight mode"></mat-slide-toggle>
     <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="openConnectionModal()" matTooltip="Database connection">
       <mat-icon>storage</mat-icon>
     </button>

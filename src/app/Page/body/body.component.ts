@@ -18,6 +18,7 @@ export class BodyComponent implements OnInit {
   public nodeInfoData: any;
   public databaseSelected: boolean = true;
   public restartView: boolean = false;
+  public highlightNodes: boolean = false;
   private credentialsSubscription!: Subscription;
   classicView: boolean = true; // default value
 
@@ -69,5 +70,8 @@ export class BodyComponent implements OnInit {
   }
   handleRelationshipsResult(result: any){
     this.edges = result;
+  }
+  handleHighlightNodes(result: any){
+    this.highlightNodes = result;
   }
 }

@@ -30,6 +30,10 @@ export class HeaderComponent {
 
   @Output() restartNodes = new EventEmitter();
 
+  @Output() highlightNodes = new EventEmitter();
+
+  public boolHighlightNodes: any = false;
+
   constructor(public dialog: MatDialog) {}
   openModal(){
     
@@ -78,4 +82,9 @@ export class HeaderComponent {
   clusterView(){
     this.viewChanged.emit(false);
   }
+  highlightView(){
+    console.debug(this.boolHighlightNodes);
+    this.highlightNodes.emit(this.boolHighlightNodes);
+  }
+
 }

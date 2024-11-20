@@ -30,6 +30,7 @@ export class CanvasViewComponent implements OnChanges, OnInit{
   @Input() nodeData: Array<Node> = [];
   @Input() edgeData: Array<Edge> = [];
   @Input() classicView: Boolean = true;
+  @Input() highlightNodesAndEdges: Boolean = false;
   @Input() restartView: Boolean = false;
   @Output() nodeInfo: EventEmitter<any> = new EventEmitter<any>();
   @Output() nodeDataDetails: EventEmitter<any> = new EventEmitter<any>();
@@ -163,14 +164,18 @@ export class CanvasViewComponent implements OnChanges, OnInit{
     console.debug(this.edgeData);
     this.nodes = this.nodeData;
     this.edges = this.edgeData;
-    if(this.classicView){
-      console.debug(this.nodes);
-      console.debug(this.edges);
-      this.createGraph();
+    if(this.highlightNodesAndEdges){
+      this.renderHighlightedGraph(this.nodes, this.edges);
     }else{
-      console.debug(this.nodes);
-      console.debug(this.edges);
-      this.createClusterGraph();
+      if(this.classicView){
+        console.debug(this.nodes);
+        console.debug(this.edges);
+        this.createGraph();
+      }else{
+        console.debug(this.nodes);
+        console.debug(this.edges);
+        this.createClusterGraph();
+      }
     }
     
   }
@@ -249,10 +254,15 @@ export class CanvasViewComponent implements OnChanges, OnInit{
       console.debug("ACTUAL NODES:");
       console.debug(this.nodes);
       console.debug(this.classicView);
-      if(this.classicView){
-        this.createGraph();
+      if(this.highlightNodesAndEdges){
+        this.renderHighlightedGraph(this.nodes, this.edges);
       }else{
-        this.createClusterGraph();
+        if(this.classicView){
+          this.createGraph();
+        }
+        else{
+          this.createClusterGraph();
+        }
       }
   });
   } 
@@ -284,6 +294,214 @@ export class CanvasViewComponent implements OnChanges, OnInit{
   
     return colors;
   }
+
+  renderHighlightedGraph(subgraphNodes: Array<Node>, subgraphEdges: Array<Edge>): void {
+    const svgWidth = window.innerWidth;
+    const svgHeight = window.innerHeight;
+
+    // Extract unique node and edge types for color coding
+    const nodeTypes = [...new Set(this.originalNodes.map(node => node.name))];
+    const edgeTypes = [...new Set(this.originalEdges.map(edge => edge.type))];
+    const allTypes = [...nodeTypes, ...edgeTypes]; // Combine node and edge types
+    const colors = this.generateColors(allTypes.length); // Generate colors
+    const colorScale = d3.scaleOrdinal(colors).domain(allTypes);
+
+    // Prepare node and edge color mappings
+    const nodeTypesWithColors = nodeTypes.map(nodeType => ({
+        nodeType: nodeType,
+        color: colorScale(nodeType),
+        length: this.getNodeCount(nodeType),
+    }));
+    const edgeTypesWithColors = edgeTypes.map(edgeType => ({
+        relType: edgeType,
+        color: colorScale(edgeType),
+        length: this.getEdgeCount(edgeType),
+    }));
+
+    // Emit node and edge types with colors
+    this.nodeInfo.emit([nodeTypesWithColors, edgeTypesWithColors]);
+
+    // Helper functions for consistent calculations
+    const computeCircleRadius = (attributeCount: number, wordLenght: number) => {
+      const baseRadius = 50;
+      const additionalRadius = 3;  // Increment for each additional attribute beyond a threshold
+      const threshold = 3;  // Base radius corresponds to this number of attributes
+      const wordThreshold = 10;
+      return baseRadius;
+      if (attributeCount <= threshold && wordLenght <= wordThreshold) return baseRadius;
+      if(attributeCount >= wordLenght){
+        return baseRadius + (attributeCount - threshold) * additionalRadius
+      }else{
+        return baseRadius + (wordLenght - wordThreshold) * additionalRadius;
+      }
+      
+    };
+
+    const getLongestWordLength = (properties: any) => {
+      let longestLength = 0;
+  
+      for (let key in properties) {
+          const keyLength = key.length;
+          const valueLength = String(properties[key]).length;
+          longestLength = Math.max(longestLength, 
+            (keyLength + valueLength));
+      }
+  
+      return longestLength;
+    };
+
+    function truncateText(text: any, maxLength: any) {
+      return text.length > maxLength ? text.slice(0, maxLength - 3) + '...' : text;
+    }
+    // Set up SVG canvas
+    const svg = d3.select(this.svgRef.nativeElement)
+        .style('background-color', 'transparent')
+        .attr('width', svgWidth)
+        .attr('height', svgHeight);
+
+    svg.selectAll('.nodes').remove();
+    svg.selectAll('.links').remove();
+
+    const linkGroup = svg.append('g').attr('class', 'links');
+    const nodeGroup = svg.append('g').attr('class', 'nodes');
+
+    // Handle zoom behavior
+    const zoomBehavior = d3.zoom()
+        .extent([[0, 0], [svgWidth, svgHeight]])
+        .scaleExtent([0.1, 30])
+        .on('zoom', (event: any) => {
+            linkGroup.attr('transform', event.transform);
+            nodeGroup.attr('transform', event.transform);
+        });
+
+    svg.call(zoomBehavior);
+
+    // Initialize force simulation
+    const simulation = d3.forceSimulation(this.originalNodes)
+        .force('link', d3.forceLink(this.originalEdges).id((d: any) => d.id).distance(100))
+        .force('charge', d3.forceManyBody().strength(-300))
+        .force('center', d3.forceCenter(svgWidth / 2, svgHeight / 2))
+        .force('collision', d3.forceCollide().radius((d: any) => {
+            const attributeCount = Object.entries(d.properties).length;
+            const longestWordLength = getLongestWordLength(d.properties);
+            return computeCircleRadius(attributeCount, longestWordLength) + 200; // Added spacing
+        }));
+
+    let linkIndex: any = {};
+    this.originalEdges.forEach((edge, i) => {
+        let ids = [edge.source.id, edge.target.id].sort();
+        let id = ids.join("-");
+        if (!linkIndex[id]) {
+            linkIndex[id] = { total: 0, maxIndex: 0 };
+        }
+        linkIndex[id].maxIndex++;
+        edge.linknum = linkIndex[id].maxIndex;
+    });
+
+    // Render edges
+    const links = linkGroup.selectAll('path')
+        .data(this.originalEdges)
+        .enter().append('path')
+        .attr('stroke', (d) => colorScale(d.type))
+        .attr('fill', 'none')
+        .attr('stroke-width', 2);
+
+    // Highlight subgraph edges
+    links.filter((d: Edge) => subgraphEdges.some(edge => edge.source === d.source && edge.target === d.target))
+        .attr('stroke', 'orange')
+        .attr('stroke-width', 4);
+
+    // Render nodes
+    const nodes = nodeGroup.selectAll('.node-group')
+        .data(this.originalNodes)
+        .enter().append('g')
+        .attr('class', 'node-group')
+        .on('click', (event, nodeData) => this.displayData(nodeData))
+        .on('mouseenter', function () {
+            d3.select(this).style('cursor', 'pointer');
+        })
+        .on('mouseleave', function () {
+            d3.select(this).style('cursor', 'default');
+        });
+
+    nodes.append('circle')
+        .attr('r', (d: any) => {
+            const attributeCount = Object.entries(d.properties).length;
+            const longestWordLength = getLongestWordLength(d.properties);
+            return computeCircleRadius(attributeCount, longestWordLength);
+        })
+        .attr('fill', (d: any) => colorScale(d.name));
+
+    // Highlight subgraph nodes
+    nodes.filter((d: Node) => subgraphNodes.some(node => node.id === d.id))
+        .select('circle')
+        .attr('stroke', 'orange')
+        .attr('stroke-width', 3);
+
+    // Display node attributes
+    nodes.each(function (d: any) {
+        const node = d3.select(this);
+        const attributes = Object.entries(d.properties).slice(0, 3);
+        let yPosition = 5;
+        const lineHeight = 15;
+
+        attributes.forEach(([key, value], index) => {
+            node.append('text')
+                .attr('dy', yPosition + (index * lineHeight))
+                .attr('dx', 0)
+                .attr('lengthAdjust', 'spacingAndGlyphs')
+                .style('text-anchor', 'middle')
+                //@ts-ignore
+                .text(`${truncateText(key, 6)}: ${truncateText(value, 5)}`);
+        });
+    });
+
+    nodes.append('text')
+        .attr('dy', -25)
+        .style('text-anchor', 'middle')
+        .style('font-weight', 'bold')
+        .text((d: any) => truncateText(d.name, 10));
+
+    // Tooltips
+    const tooltip = d3.select(this.graphContainerRef.nativeElement).append("div")
+        .attr('class', 'tooltip');
+
+    links.on('mouseenter', function (event, d) {
+        tooltip
+            .style('opacity', 1)
+            .style('left', `${event.pageX}px`)
+            .style('top', `${event.pageY}px`)
+            .html(`${d.type}`);
+    }).on('mouseleave', () => {
+        tooltip.style('opacity', 0);
+    });
+
+    function linkArc(d: any) {
+        const dx = d.target.x - d.source.x;
+        const dy = d.target.y - d.source.y;
+        const dr = Math.sqrt(dx * dx + dy * dy);
+        const linkInfo = linkIndex[[d.source.id, d.target.id].sort().join("-")];
+        const totalLinks = linkInfo.total;
+        const linkNumber = d.linknum;
+        let offset = (linkNumber - (totalLinks - 1) / 2) * 30;
+        if (linkNumber % 2 === 0) offset *= -1;
+        let qx = d.source.x + dx / 2 + offset;
+        let qy = d.source.y + dy / 2 + offset;
+        if (totalLinks === 1) {
+            qx = 0;
+            qy = 0;
+        }
+        return `M${d.source.x},${d.source.y}Q${qx},${qy} ${d.target.x},${d.target.y}`;
+    }
+
+    simulation.on('tick', () => {
+        links.attr('d', linkArc);
+        nodes.attr('transform', d => `translate(${d.x},${d.y})`);
+    });
+
+    this.svg = svg;
+    this.zoomBehavior = zoomBehavior;
+}
   
   createGraph() {
     const svgWidth = window.innerWidth;
