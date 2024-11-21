@@ -407,9 +407,11 @@ export class CanvasViewComponent implements OnChanges, OnInit{
         .attr('stroke-width', 2);
 
     // Highlight subgraph edges
-    links.filter((d: Edge) => subgraphEdges.some(edge => edge.source === d.source && edge.target === d.target))
-        .attr('stroke', 'orange')
-        .attr('stroke-width', 4);
+    links.filter((d: Edge) => subgraphEdges.some(edge => 
+      edge.source === d.source.id && edge.target === d.target.id && edge.type == d.type
+  ))
+      .attr('stroke', 'orange')
+      .attr('stroke-width', 4);
 
     // Render nodes
     const nodes = nodeGroup.selectAll('.node-group')

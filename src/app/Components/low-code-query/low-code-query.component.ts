@@ -1,5 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
 import {MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule} from '@angular/material/dialog';
+import { Edge } from 'src/app/Models/nodes';
 import { GptService } from 'src/app/Neo4j/QuryBuilder/gpt.service';
 
 @Component({
@@ -31,15 +32,47 @@ export class LowCodeQueryComponent {
   public updateNewValue: String | null = null;
   public queryPrompt: String = '';
   public queryResult: String = '';
+  public nodeStructure: any[] = [];
+  public edgeStructure: any[] = [];
   constructor(
     public dialogRef: MatDialogRef<LowCodeQueryComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private gptService: GptService
   ) {
+    console.debug("DATA:");
+    console.debug(data);
     for (let index = 0; index < data[0].length; index++) {
       console.debug(data[0]);
       this.nodes.push({name: data[0][index].name, properties: data[0][index].properties});
     }
+    for (let index = 0; index < data[0].length; index++) {
+      if(!this.nodeStructure.includes({name: data[0][index].name})){
+        this.nodeStructure.push({name: data[0][index].name, properties: data[0][index].properties});
+      }
+    }
+    for (let index = 0; index < data[1].length; index++){
+      if(!this.edgeStructure.includes({type: data[1][index].type})){
+        this.edgeStructure.push({type: data[1][index].type});
+      }
+    }
+    console.debug("DATA STRUCTURE:");
+    console.debug(this.nodeStructure);
+    console.debug(this.edgeStructure);
+    let graphStructure = "NODES:";
+    for (let index = 0; index < this.nodeStructure.length; index++) {
+      graphStructure += "OBJECT:" + this.nodeStructure[index].name
+      graphStructure += "\n"
+      graphStructure += "PROPERTIES:" + Object.getOwnPropertyNames(this.nodeStructure[index].properties)
+      graphStructure += "\n"
+    }
+    let edgeStructure = "EDGES:";
+    for (let index = 0; index < this.edgeStructure.length; index++) {
+      edgeStructure += this.edgeStructure[index].type
+      edgeStructure += "\n"
+    }
+    
+    console.debug(graphStructure);
+    console.debug(edgeStructure);
   }
 
   filteredData(){
@@ -112,7 +145,7 @@ export class LowCodeQueryComponent {
     
   }
   buildQuery(){
-    this.gptService.generateQuery(this.queryPrompt).subscribe(response => {
+    this.gptService.generateQuery(this.queryPrompt, this.nodeStructure, this.edgeStructure).subscribe(response => {
       this.queryResult = response
     });
   }

@@ -126,14 +126,28 @@
         </div>
     </div>
     <div *ngIf="gptBuilder">
-        <button mat-icobuttonn- class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="previousStep()">
-            <mat-icon>arrow_back</mat-icon>
-        </button>
-        <mat-form-field>
-            <mat-label>Type your query prompt</mat-label>
-            <input matInput [(ngModel)]="queryPrompt">
-        </mat-form-field>
-        <button mat-raised-button extended color="primary" (click)="buildQuery()">Build query</button>
-        <span class="output-query">{{this.queryResult}}</span>
+        <div class="info-section">
+            <button mat-icon-button class="example-icon favorite-icon" aria-label="Go back" (click)="previousStep()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+        </div>
+    
+        <!-- Query Prompt Section -->
+        <div class="info-section">
+            <mat-form-field class="full-width">
+                <mat-label>Type your query prompt</mat-label>
+                <textarea matInput [(ngModel)]="queryPrompt" rows="8"></textarea>
+            </mat-form-field>
+        </div>
+    
+        <!-- Build Query Button -->
+        <div class="info-section">
+            <button mat-raised-button color="primary" (click)="buildQuery()">Build Query</button>
+        </div>
+    
+        <!-- Output Query Section -->
+        <div class="info-section">
+            <span class="output-query">{{ queryResult }}</span>
+        </div>
     </div>
 </div>
