@@ -3,6 +3,7 @@ import {MatDialog, MAT_DIALOG_DATA, MatDialogRef, MatDialogModule} from '@angula
 import { DBConnectDialogComponent } from 'src/app/Components/dbconnect-dialog/dbconnect-dialog.component';
 import { NodeMapDialogComponent } from 'src/app/Components/node-map-dialog/node-map-dialog.component';
 import { LowCodeQueryComponent } from 'src/app/Components/low-code-query/low-code-query.component';
+import { AnalyticsDrawerComponent } from 'src/app/Components/analytics-drawer/analytics-drawer.component';
 
 @Component({
   selector: 'app-header',
@@ -19,6 +20,8 @@ export class HeaderComponent {
   readonly LOWER_LIMIT: number = 10;
   @Input()
   public nodeDataDetails: any;
+  @Input()
+  public nodeData: any;
 
   @Output("openDrawer")
   emitter: EventEmitter<any> = new EventEmitter();
@@ -66,6 +69,16 @@ export class HeaderComponent {
       console.log("Dialog closed");
     })
   }
+
+  openAnalyticsDrawer(){
+    const dialogRef = this.dialog.open(AnalyticsDrawerComponent, {
+      data: this.nodeData
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
   openDrawer(){
     this.emitter.emit("openDrawer");
   }

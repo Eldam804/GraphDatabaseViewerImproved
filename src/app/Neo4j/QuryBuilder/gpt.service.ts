@@ -23,7 +23,7 @@ export class GptService {
       model: 'gpt-4', // Use 'gpt-3.5-turbo' or 'gpt-4' depending on your subscription
       messages: [
         { role: 'user', content: `Generate a query for the following prompt in Cypher(Neo4j): "${prompt}". Only return the query without any additional text.
-          When using MATCH please keep in mind the the below structures, as they are very important!
+          When using MATCH please keep in mind the below structures, as it is very important!
           The database structure in the graph is as follows= NODES: "${nodeStructure}" EDGES: "${edgeStructure}"
         ` }
       ],

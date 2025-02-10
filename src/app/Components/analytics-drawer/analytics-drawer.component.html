@@ -1,0 +1,17 @@
+<div mat-dialog-content>
+    <div *ngFor="let key of objectKeys(arrayOfObjects)" class="card">
+      <h2>{{ key }}</h2>
+      <div *ngFor="let group of arrayOfObjects[key]" class="group">
+        <h3>{{ key }} Group {{ arrayOfObjects[key].indexOf(group) + 1 }}</h3>
+        <div *ngIf="computeStatisticsByAttribute(group) as stats">
+          <div *ngFor="let attr of objectKeys(stats)" class="attribute">
+            <h4>{{ attr }}</h4>
+            <div *ngFor="let stat of objectKeys(stats[attr])" class="stat">
+              <p><strong>{{ stat }}</strong>: {{ stats[attr][stat] }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

@@ -33,6 +33,7 @@ export class CanvasViewComponent implements OnChanges, OnInit{
   @Input() highlightNodesAndEdges: Boolean = false;
   @Input() restartView: Boolean = false;
   @Output() nodeInfo: EventEmitter<any> = new EventEmitter<any>();
+  @Output() allNodes: EventEmitter<any> = new EventEmitter<any>();
   @Output() nodeDataDetails: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private service: DriverService, public dialog: MatDialog){
@@ -246,9 +247,8 @@ export class CanvasViewComponent implements OnChanges, OnInit{
               type: edgeData._fields[0].type
           });
       });
-      console.debug(allNodesProps);
-      console.debug(allEdgesProps);
       this.nodeDataDetails.emit([allNodesProps, allEdgesProps])
+      this.allNodes.emit(this.nodes);
       console.debug("ACTUAL EDGES:");
       console.debug(this.edges);
       console.debug("ACTUAL NODES:");

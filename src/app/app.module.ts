@@ -34,6 +34,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatListModule} from '@angular/material/list';
 import { GptService } from './Neo4j/QuryBuilder/gpt.service';
 import { HttpClientModule } from '@angular/common/http';
+import { AnalyticsDrawerComponent } from './Components/analytics-drawer/analytics-drawer.component';
 
 
 @NgModule({
@@ -49,6 +50,7 @@ import { HttpClientModule } from '@angular/common/http';
     NodeDetailDialogComponent,
     NodeSingleDialogComponent,
     LowCodeQueryComponent,
+    AnalyticsDrawerComponent,
   ],
   exports: [
     AppComponent,

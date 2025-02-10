@@ -12,6 +12,8 @@ export class BodyComponent implements OnInit {
   @ViewChild('drawer', { static: true }) public drawer!: MatDrawer;
   @ViewChild('drawerCode', { static: true }) public codeDrawer!: MatDrawer;
   public queryOutput: any;
+  public nodesLoaded: any;
+  public allNodes: any;
   public nodes: any;
   public edges: any;
   public nodeData: any;

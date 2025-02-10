@@ -1,5 +1,5 @@
 <div class="app-container">
-  <app-header (openDrawer)="toggle()" (openCodeDrawer)="toggleCode()" (highlightNodes)="handleHighlightNodes($event)" [nodeDataDetails]="nodeInfoData" [nodeInformation]="nodeData" (viewChanged)="handleViewChange($event)" (restartNodes)="handleRestart($event)"></app-header>
+  <app-header (openDrawer)="toggle()" (openCodeDrawer)="toggleCode()" (highlightNodes)="handleHighlightNodes($event)" [nodeData]="allNodes" [nodeDataDetails]="nodeInfoData" [nodeInformation]="nodeData" (viewChanged)="handleViewChange($event)" (restartNodes)="handleRestart($event)"></app-header>
 
   <mat-drawer-container class="example-container" [hasBackdrop]="true">
     <mat-drawer #drawerCode [mode]="'over'" position="end" class="code-sidenav">
@@ -15,7 +15,7 @@
     </mat-drawer>
 
     <div>
-      <app-canvas-view *ngIf="databaseSelected; else noDatabaseSelected" [highlightNodesAndEdges]="highlightNodes" [restartView]="restartView" [classicView]="classicView" [canvasData]="queryOutput" (nodeDataDetails)="nodeInfoData = $event" (nodeInfo)="nodeData = $event" [nodeData]="nodes" [edgeData]="edges"></app-canvas-view>
+      <app-canvas-view *ngIf="databaseSelected; else noDatabaseSelected" [highlightNodesAndEdges]="highlightNodes" [restartView]="restartView" [classicView]="classicView" [canvasData]="queryOutput" (allNodes)="allNodes = $event" (nodeDataDetails)="nodeInfoData = $event" (nodeInfo)="nodeData = $event" [nodeData]="nodes" [edgeData]="edges"></app-canvas-view>
       <ng-template #noDatabaseSelected>
         <div class="no-database-message">
           Database not selected, please select a database.
