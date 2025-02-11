@@ -1,17 +1,27 @@
 <div mat-dialog-content>
-    <div *ngFor="let key of objectKeys(arrayOfObjects)" class="card">
-      <h2>{{ key }}</h2>
-      <div *ngFor="let group of arrayOfObjects[key]" class="group">
-        <h3>{{ key }} Group {{ arrayOfObjects[key].indexOf(group) + 1 }}</h3>
-        <div *ngIf="computeStatisticsByAttribute(group) as stats">
-          <div *ngFor="let attr of objectKeys(stats)" class="attribute">
-            <h4>{{ attr }}</h4>
-            <div *ngFor="let stat of objectKeys(stats[attr])" class="stat">
-              <p><strong>{{ stat }}</strong>: {{ stats[attr][stat] }}</p>
+    <mat-tab-group class="container">
+        <mat-tab *ngFor="let key of objectKeys(arrayOfObjects)" [label]="key">
+            <div class="card-grid">
+                <div *ngFor="let group of arrayOfObjects[key]">
+                    <mat-card class="card" appearance="outlined">
+                        <mat-card-header>
+                            <h2 class="test-type">{{ key }} Type: {{ arrayOfObjects[key].indexOf(group) + 1 }}</h2>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <ng-container *ngIf="computeStatisticsByAttribute(group) as stats">
+                                <div *ngFor="let attr of objectKeys(stats)" class="attribute-box">
+                                    <h3 class="attribute-title">{{ attr }}</h3>
+                                    <div *ngFor="let stat of objectKeys(stats[attr])">
+                                        <p class="stat-entry">
+                                            <strong>{{ stat }}:</strong> {{ stats[attr][stat] }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
+        </mat-tab>
+    </mat-tab-group>
+</div>

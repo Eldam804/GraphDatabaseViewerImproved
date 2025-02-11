@@ -21,6 +21,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatCardModule} from '@angular/material/card';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { NodeMapDialogComponent } from './Components/node-map-dialog/node-map-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -84,7 +86,9 @@ import { AnalyticsDrawerComponent } from './Components/analytics-drawer/analytic
     MatSnackBarModule,
     MatListModule,
     MatSelectModule,
-    MatInputModule
+    MatInputModule,
+    MatTabsModule,
+    MatCardModule
   ],
   providers: [GptService],
   bootstrap: [AppComponent]

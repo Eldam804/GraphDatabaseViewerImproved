@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 @Component({
   selector: 'app-analytics-drawer',
   templateUrl: './analytics-drawer.component.html',
-  styleUrls: ['./analytics-drawer.component.css']
+  styleUrls: ['./analytics-drawer.component.css'],
 })
 export class AnalyticsDrawerComponent {
   arrayOfObjects: any = {};
