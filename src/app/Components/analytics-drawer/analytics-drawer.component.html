@@ -1,14 +1,41 @@
 <div mat-dialog-content>
-    <mat-tab-group class="container">
-        <mat-tab *ngFor="let key of objectKeys(arrayOfObjects)" [label]="key">
-            <div class="card-grid">
-                <div *ngFor="let group of arrayOfObjects[key]">
-                    <mat-card class="card" appearance="outlined">
-                        <mat-card-header>
-                            <h2 class="test-type">{{ key }} Type: {{ arrayOfObjects[key].indexOf(group) + 1 }}</h2>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <ng-container *ngIf="computeStatisticsByAttribute(group) as stats">
+    <!-- Main Object Selection View -->
+    <div *ngIf="!selectedObject" class="grid-container">
+        <div *ngFor="let key of objectKeys(arrayOfObjects)" class="object-set">
+            
+            <!-- Clickable Header Card -->
+            <mat-card class="clickable-card" (click)="selectObject(key)">
+                <mat-card-header>
+                    <h2 class="object-title">{{ key }}</h2>
+                </mat-card-header>
+                <mat-card-content>
+                    <p class="click-message">
+                        Click to view details
+                    </p>
+                </mat-card-content>
+            </mat-card>
+
+        </div>
+    </div>
+
+    <!-- Detailed Object View -->
+    <div *ngIf="selectedObject" class="detailed-view">
+        <button mat-button color="primary" class="back-button" (click)="goBack()">
+            ← Back
+        </button>
+        <div class="expanded-grid" *ngIf="arrayOfObjects[selectedObject]?.length > 0; else noDataMessage">
+            <div *ngFor="let group of arrayOfObjects[selectedObject]" class="object-container">
+                <mat-card class="data-card" appearance="outlined">
+                    <mat-card-header>
+                        <h3 class="data-title">
+                            {{ selectedObject }} Type: {{ arrayOfObjects[selectedObject].indexOf(group) + 1 }}
+                        </h3>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <ng-container *ngIf="computeStatisticsByAttribute(group) as stats">
+                            
+                            <!-- 🔹 Attributes are now larger -->
+                            <div class="split">
                                 <div *ngFor="let attr of objectKeys(stats)" class="attribute-box">
                                     <h3 class="attribute-title">{{ attr }}</h3>
                                     <div *ngFor="let stat of objectKeys(stats[attr])">
@@ -17,11 +44,17 @@
                                         </p>
                                     </div>
                                 </div>
-                            </ng-container>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
+                            </div>
+        
+                        </ng-container>
+                    </mat-card-content>
+                </mat-card>
             </div>
-        </mat-tab>
-    </mat-tab-group>
+        </div>                  
+        <ng-template #noDataMessage>
+            <div class="no-data-card">
+                <p class="no-data-message">No attributes or numbers available for data analysis.</p>
+            </div>
+        </ng-template>
+    </div>
 </div>

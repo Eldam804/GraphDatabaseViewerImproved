@@ -8,13 +8,17 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class AnalyticsDrawerComponent {
   arrayOfObjects: any = {};
+  selectedObject: string | null = null;
+  expandedAttributes: { [key: string]: boolean } = {};
   constructor(
       public dialogRef: MatDialogRef<AnalyticsDrawerComponent>,
       @Inject(MAT_DIALOG_DATA) public data: any
     ) {
       this.getStructuredData(data);
     }
-
+    toggleAttribute(attr: string) {
+      this.expandedAttributes[attr] = !this.expandedAttributes[attr];
+    }
      getStructuredData(data: any) {
       for (let index = 0; index < data.length; index++) {
         const name = data[index].name;
@@ -126,5 +130,12 @@ export class AnalyticsDrawerComponent {
     }
     objectEntries(obj: any): { key: string; value: any }[] {
       return Object.entries(obj).map(([key, value]) => ({ key, value }));
+    }
+    selectObject(key: string) {
+      this.selectedObject = key; // Show detailed view
+    }
+  
+    goBack() {
+      this.selectedObject = null; // Return to main selection view
     }
 }
